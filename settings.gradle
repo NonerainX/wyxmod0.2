@@ -1,0 +1,46 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+// maven.neoforged.net 在本机网络下无法直连，全部使用国内镜像 + StellarDrift 镜像。
+dependencyResolutionManagement {
+    // 项目级仓库会被忽略，统一使用下列镜像（避免直连 maven.neoforged.net 超时）
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        // 本地补充仓库：提供各镜像缺失的 net.neoforged:minecraft-dependencies:1.21.1
+        // （该 POM 仅含官方 1.21.1 版本清单中的库依赖列表，由本机重建）
+        maven {
+            name = "LocalM2"
+            url = uri("libs/m2local")
+        }
+        maven {
+            name = "NYISTNeoForgedMirror"
+            url = uri("https://mirror4.nyist.edu.cn/bmclapi/")
+        }
+        maven {
+            name = "BMCLAPIMaven"
+            url = uri("https://bmclapi2.bangbang93.com/maven/")
+        }
+        // Mojang 官方库（MDG 默认仓库在 PREFER_SETTINGS 下被忽略，这里显式加入）
+        maven {
+            name = "MojangLibraries"
+            url = uri("https://libraries.minecraft.net")
+        }
+        // StellarDrift 内部镜像：补齐 neoform-runtime（NFRT）等 BMCLAPI 缺失的工件
+        maven {
+            name = "StellarDriftInternal"
+            url = uri("https://repo.stellardrift.ca/maven/internal/")
+        }
+        maven {
+            name = "AliyunPublic"
+            url = uri("https://maven.aliyun.com/repository/public")
+        }
+        mavenCentral()
+    }
+}
